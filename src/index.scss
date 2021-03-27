@@ -15,5 +15,48 @@ code {
 canvas {
   height: 100%;
   position: fixed;
+  outline: none;
   width: 100%;
+}
+
+#menu {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  .menu-content {
+    margin: 0 auto;
+    width: fit-content;
+  }
+  button {
+    letter-spacing: 2.5px;
+    font-weight: 500;
+  }
+}
+
+$green: #39dbc2;
+$pink: #f41fbf;
+
+.title-text {
+  $random-text: 'foreign terrace';
+  $stroke-width: 110px * 0.05;
+  position: relative;
+  display: inline-block;
+  font-size: 100px;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-style: italic;
+  color: transparent;
+  -webkit-text-stroke-width: $stroke-width;
+  white-space: nowrap;
+  $x: 12px;
+  $y: 15px;
+  $step: 1px;
+  text-shadow: $x $y $green,
+  $x + $step $y + $step $pink,
+  $x + $step * 2 $y + $step * 2 $pink,
+  $x + $step * 3 $y + $step * 3 $pink,
+  $x + $step * 4 $y + $step * 4 $pink,
+  $x + $step * 5 $y + $step * 5 $pink,
+  $x + $step * 6 $y + $step * 6 $pink,
+  $x + $step * 7 $y + $step * 7 $pink,
 }
