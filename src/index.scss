@@ -37,7 +37,6 @@ $green: #39dbc2;
 $pink: #f41fbf;
 
 .title-text {
-  $random-text: 'foreign terrace';
   $stroke-width: 110px * 0.05;
   position: relative;
   display: inline-block;
@@ -45,13 +44,14 @@ $pink: #f41fbf;
   font-weight: 800;
   text-transform: uppercase;
   font-style: italic;
-  color: transparent;
+  color: $green;
   -webkit-text-stroke-width: $stroke-width;
+  -webkit-text-stroke-color: $green;
   white-space: nowrap;
-  $x: 12px;
-  $y: 15px;
+  $x: 0px;
+  $y: 3px;
   $step: 1px;
-  text-shadow: $x $y $green,
+  text-shadow:
   $x + $step $y + $step $pink,
   $x + $step * 2 $y + $step * 2 $pink,
   $x + $step * 3 $y + $step * 3 $pink,
@@ -59,4 +59,7 @@ $pink: #f41fbf;
   $x + $step * 5 $y + $step * 5 $pink,
   $x + $step * 6 $y + $step * 6 $pink,
   $x + $step * 7 $y + $step * 7 $pink,
+  $x + $step * 8 $y + $step * 8 $pink,
+  $x + $step * 9 $y + $step * 9 $pink,
+  $x + $step * 10 $y + $step * 10 $pink,
 }
