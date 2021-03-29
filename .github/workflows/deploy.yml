@@ -16,8 +16,7 @@ jobs:
           wget -nv https://corretto.aws/downloads/latest/amazon-corretto-11-x64-linux-jdk.deb
           sudo dpkg --install amazon-corretto-11-x64-linux-jdk.deb
           rm amazon-corretto-11-x64-linux-jdk.deb
-          ./signaling/gradlew -v
-          java -version
+          ./signaling/gradlew bootJar
 
 #      - uses: hashicorp/packer-github-actions@master
 #        with:
