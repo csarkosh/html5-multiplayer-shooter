@@ -21,7 +21,6 @@ source "amazon-ebs" "signaling" {
 
 build {
   sources = ["source.amazon-ebs.signaling"]
-  # Transfer jar
   provisioner "file" {
     source = "signaling/build/libs/"
     destination = "~"
@@ -32,7 +31,7 @@ build {
       "sudo apt-get update",
       "sudo add-apt-repository -y ppa:openjdk-r/ppa",
       "sudo apt-get install -y java-common",
-      "wget https://corretto.aws/downloads/latest/amazon-corretto-11-aarch64-linux-jdk.deb",
+      "wget -nv https://corretto.aws/downloads/latest/amazon-corretto-11-aarch64-linux-jdk.deb",
       "sudo dpkg --install amazon-corretto-11-aarch64-linux-jdk.deb",
       "rm amazon-corretto-11-aarch64-linux-jdk.deb",
     ]

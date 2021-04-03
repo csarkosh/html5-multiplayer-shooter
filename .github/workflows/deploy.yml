@@ -7,7 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - env:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Build React App
+        run: |
+          npm ci
+          npm run build
+          mv build signaling/src/main/resources/public
+      - name: Build JAR
+        env:
           JAVA_HOME: /usr/lib/jvm/java-11-amazon-corretto
         run: |
           sudo apt-get update
@@ -18,8 +27,8 @@ jobs:
           rm amazon-corretto-11-x64-linux-jdk.deb
           cd signaling
           ./gradlew bootJar
-
-#      - uses: hashicorp/packer-github-actions@master
+#      - name: Build AMI
+#        uses: hashicorp/packer-github-actions@master
 #        with:
 #          command: build
 #          arguments: "-color=false -on-error=abort"
