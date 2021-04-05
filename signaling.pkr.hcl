@@ -1,6 +1,7 @@
 locals {
   ami_name = "signaling"
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
+  jar_name = "signaling-0.0.1-SNAPSHOT.jar"
 }
 
 source "amazon-ebs" "signaling" {
@@ -22,8 +23,12 @@ source "amazon-ebs" "signaling" {
 build {
   sources = ["source.amazon-ebs.signaling"]
   provisioner "file" {
-    source = "signaling/build/libs/"
-    destination = "~"
+    source = "signaling/build/libs/${local.jar_name}"
+    destination = "~/${local.jar_name}"
+  }
+  provisioner "file" {
+    source = "signaling.service"
+    destination = "~/signaling.service"
   }
   # Setup Java 11 Corretto
   provisioner "shell" {
@@ -34,6 +39,8 @@ build {
       "wget -nv https://corretto.aws/downloads/latest/amazon-corretto-11-aarch64-linux-jdk.deb",
       "sudo dpkg --install amazon-corretto-11-aarch64-linux-jdk.deb",
       "rm amazon-corretto-11-aarch64-linux-jdk.deb",
+      "sudo chmod 500 ~/${local.jar_name}",
+      "sudo mv ~/signaling.service /etc/systemd/system"
     ]
   }
 }

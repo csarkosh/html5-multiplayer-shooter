@@ -41,3 +41,12 @@ jobs:
           target: signaling.pkr.hcl
         env:
           PACKER_LOG: 1
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.13.5
+      - name: Deploy AMI
+        run: |
+          cd infrastructure
+          terraform init
+          terraform apply -auto-approve
+          cd ..
