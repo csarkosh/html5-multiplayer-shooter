@@ -19,14 +19,14 @@ provider "aws" {
   region = "us-east-1"
 }
 
-data "aws_acm_certificate" "cert" {
-  domain = "csarko.sh"
-  provider = aws.us-east-1
-}
-
-data "aws_route53_zone" "zone" {
-  name = "csarko.sh."
-}
+//data "aws_acm_certificate" "cert" {
+//  domain = "csarko.sh"
+//  provider = aws.us-east-1
+//}
+//
+//data "aws_route53_zone" "zone" {
+//  name = "csarko.sh."
+//}
 
 data "aws_ami" "ami" {
   most_recent = true
