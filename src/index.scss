@@ -1,4 +1,8 @@
+$green: #39dbc2;
+$pink: #f41fbf;
+
 body {
+  background-color: #33334c;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -33,24 +37,22 @@ canvas {
   }
 }
 
-$green: #39dbc2;
-$pink: #f41fbf;
-
 .title-text {
   $stroke-width: 110px * 0.05;
-  position: relative;
-  display: inline-block;
-  font-size: 100px;
-  font-weight: 800;
-  text-transform: uppercase;
-  font-style: italic;
-  color: $green;
-  -webkit-text-stroke-width: $stroke-width;
-  -webkit-text-stroke-color: $green;
-  white-space: nowrap;
   $x: 0px;
   $y: 3px;
   $step: 1px;
+  color: $green;
+  display: inline-block;
+  font-size: 100px;
+  font-style: italic;
+  font-weight: 800;
+  position: relative;
+  text-transform: uppercase;
+  user-select: none;
+  white-space: nowrap;
+  -webkit-text-stroke-color: $green;
+  -webkit-text-stroke-width: $stroke-width;
   text-shadow:
   $x + $step $y + $step $pink,
   $x + $step * 2 $y + $step * 2 $pink,
