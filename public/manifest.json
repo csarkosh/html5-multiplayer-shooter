@@ -1,6 +1,6 @@
 {
-  "short_name": "webrtc.csarko.sh",
-  "name": "Online Multiplayer Shooter",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",

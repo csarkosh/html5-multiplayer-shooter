@@ -1,4 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+.idea
+.terraform*
 
 # dependencies
 /node_modules
@@ -21,43 +23,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-.terraform
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### NetBeans ###
-/signaling/nbproject/private/
-/signaling/nbbuild/
-/signaling/dist/
-/signaling/nbdist/
-/signaling/.nb-gradle/
-
-### VS Code ###
-.vscode/
-

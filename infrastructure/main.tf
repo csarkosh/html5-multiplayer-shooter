@@ -1,70 +1,130 @@
 terraform {
   backend "s3" {
     bucket = "sh.csarko.terraform"
-    key = "webrtc.csarko.sh/terraform.tfstate"
+    key = "shooter.csarko.sh/terraform.tfstate"
     region = "us-west-2"
   }
 }
 
-locals {
-  tag_name = "html5-multiplayer-shooter"
-}
-
 provider "aws" {
-  region = "us-west-2"
-}
-
-provider "aws" {
-  alias = "us-east-1"
   region = "us-east-1"
 }
 
-//data "aws_acm_certificate" "cert" {
-//  domain = "csarko.sh"
-//  provider = aws.us-east-1
-//}
-//
-//data "aws_route53_zone" "zone" {
-//  name = "csarko.sh."
-//}
-
-data "aws_ami" "ami" {
-  most_recent = true
-
-  filter {
-    name = "name"
-    values = ["signaling-*"]
-  }
-
-  owners = ["self"]
+locals {
+  domain_name = "shooter.csarko.sh"
 }
 
-resource "aws_security_group" "group" {
-  name = "${local.tag_name}-ec2-sg"
-  ingress {
-    from_port = 8080
-    protocol = "TCP"
-    to_port = 8080
-    cidr_blocks = ["216.243.0.0/16"]
+data "aws_acm_certificate" "cert" {
+  domain = "csarko.sh"
+}
+
+data "aws_route53_zone" "hosted_zone" {
+  name = "csarko.sh"
+}
+
+resource "aws_s3_bucket" "webbucket" {
+  bucket = local.domain_name
+  acl = "public-read"
+  cors_rule {
+    allowed_methods = ["GET"]
+    allowed_origins = [
+      "https://csarko.sh",
+      "https://*.csarko.sh"
+    ]
   }
-  ingress {
-    from_port = 22
-    protocol = "TCP"
-    to_port = 22
-    cidr_blocks = ["216.243.0.0/16"]
+  policy = <<POLICY
+{
+  "Version":"2012-10-17",
+  "Statement":[{
+    "Sid":"PublicReadGetObject",
+    "Effect":"Allow",
+    "Principal": "*",
+    "Action":["s3:GetObject"],
+    "Resource":["arn:aws:s3:::${local.domain_name}/*"]
+  }]
+}
+  POLICY
+  website {
+    index_document = "index.html"
+    error_document = "index.html"
   }
 }
 
-resource "aws_instance" "server" {
-  ami = data.aws_ami.ami.id
-  instance_type = "t4g.nano"
-  key_name = "cyrus-test-2"
-  vpc_security_group_ids = [aws_security_group.group.id]
-  tags = {
-    Name = local.tag_name
+resource "aws_cloudfront_distribution" "cdn" {
+  aliases = [local.domain_name]
+  enabled = true
+  default_root_object = "index.html"
+  custom_error_response {
+    response_page_path = "/index.html"
+    error_code = 404
+    response_code = 200
   }
-  user_data = <<-EOF
-    #!/bin/bash
-    sudo systemctl start signaling.service
-  EOF
+  origin {
+    domain_name = aws_s3_bucket.webbucket.bucket_regional_domain_name
+    origin_id = aws_s3_bucket.webbucket.id
+  }
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+  viewer_certificate {
+    acm_certificate_arn = data.aws_acm_certificate.cert.arn
+    ssl_support_method = "sni-only"
+  }
+  ordered_cache_behavior {
+    allowed_methods = ["GET", "HEAD"]
+    cached_methods = ["GET", "HEAD"]
+    forwarded_values {
+      cookies {
+        forward = "none"
+      }
+      query_string = false
+    }
+    min_ttl = 31536000
+    default_ttl = 31536000
+    max_ttl = 31536000
+    path_pattern = "/static/*"
+    target_origin_id = aws_s3_bucket.webbucket.id
+    viewer_protocol_policy = "redirect-to-https"
+  }
+  ordered_cache_behavior {
+    allowed_methods = ["GET", "HEAD"]
+    cached_methods = ["GET", "HEAD"]
+    forwarded_values {
+      cookies {
+        forward = "none"
+      }
+      query_string = false
+    }
+    min_ttl = 0
+    default_ttl = 0
+    max_ttl = 0
+    path_pattern = "/"
+    target_origin_id = aws_s3_bucket.webbucket.id
+    viewer_protocol_policy = "redirect-to-https"
+  }
+  default_cache_behavior {
+    allowed_methods = ["HEAD", "GET"]
+    cached_methods = ["HEAD", "GET"]
+    forwarded_values {
+      cookies {
+        forward = "none"
+      }
+      query_string = false
+    }
+    target_origin_id = aws_s3_bucket.webbucket.id
+    viewer_protocol_policy = "redirect-to-https"
+  }
+}
+
+resource "aws_route53_record" "dns_record" {
+  name = "${local.domain_name}."
+  type = "A"
+  zone_id = data.aws_route53_zone.hosted_zone.zone_id
+  alias {
+    evaluate_target_health = true
+    name = aws_cloudfront_distribution.cdn.domain_name
+    zone_id = aws_cloudfront_distribution.cdn.hosted_zone_id
+  }
 }
